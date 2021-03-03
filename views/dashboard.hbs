@@ -1,0 +1,83 @@
+<div class="container">
+  <div class="homeCard">
+    <h1 class="text-center" style="color:#fff">Dashboard</h1>
+  </div>
+  {{> analytics }}
+  <hr>
+  <a class="btn btn-warning float-right" href="/trips/add">New Trip</a>
+</div>
+<div class="container">
+  {{> messages }}
+  <table class="table table-hover table-dark">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">From</th>
+        <th scope="col">To</th>
+        <th scope="col">Date</th>
+        <th scope="col">Reservation Count</th>
+        <th scope="col">Edit</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#if trips}}
+      {{#each trips}}
+      <tr class="border-bottom-danger">
+        <th scope="row">{{../prefix}}{{_id}}</th>
+        <td>{{../prefix}}{{from}}</td>
+        <td>{{../prefix}}{{to}}</td>
+        <td>{{../prefix}}{{date}}</td>
+        <td>50/35</td>
+        <td>
+          <a class="btn btn-primary btn-xs" href="/trips/edit/{{{ _id }}}">edit</a>
+        </td>
+      </tr>
+      {{/each}}
+      {{/if}}
+    </tbody>
+  </table>
+</div>
+<div class="container">
+  <nav aria-label="...">
+    <ul class="pagination">
+      <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1">Previous</a>
+      </li>
+      <li class="page-item"><a class="page-link" href="#">1</a></li>
+      <li class="page-item active">
+        <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="page-item"><a class="page-link" href="#">3</a></li>
+      <li class="page-item">
+        <a class="page-link" href="#">Next</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+<style>
+  .homeCard {
+    padding: 30px;
+    margin-bottom: 30px;
+    font-size: 21px;
+    font-weight: 200;
+    margin-top: 20px;
+    border-radius: 20px;
+    background: linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
+    background-size: 170% 170%;
+    animation: animate 15s ease infinite;
+  }
+
+  @keyframes animate {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+</style>

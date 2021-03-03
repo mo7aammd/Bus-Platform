@@ -1,0 +1,58 @@
+<link rel="stylesheet" type="text/css" href="http://localhost:3000/css/style.css">
+<link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+<img class="wave" src="http://localhost:3000/images/wave.png">
+<div class="container">
+	<div class="img">
+		<img src="http://localhost:3000/images/bg.svg">
+	</div>
+	<div class="login-content">
+		<form action="/users/register" enctype="multipart/form-data" method="post" class="profile-pic-div">
+			<img src="http://localhost:3000/images/avatar.svg" id="photo">
+			<div>
+				<input type="file" id="file" name="file">
+				<label for="file" id="uploadBtn">Choose Photo</label>
+			</div>
+			<h2 class="title">Registration</h2>
+			{{> messages }}
+			<div class="input-div one">
+				<div class="i">
+					<i class="fas fa-user"></i>
+				</div>
+				<div class="div">
+					<h5>Company Name</h5>
+					<input type="text" name="companyName" class="input" value="{{{companyName}}}">
+				</div>
+			</div>
+			<div class="input-div one">
+				<div class="i">
+					<i class="fas fa-user"></i>
+				</div>
+				<div class="div">
+					<h5>Email</h5>
+					<input type="text" name="email" class="input" value="{{{email}}}">
+				</div>
+			</div>
+			<div class="input-div pass">
+				<div class="i">
+					<i class="fas fa-lock"></i>
+				</div>
+				<div class="div">
+					<h5>Password</h5>
+					<input type="password" name="password" class="input" value="{{{password}}}">
+				</div>
+			</div>
+			<div class="input-div pass">
+				<div class="i">
+					<i class="fas fa-lock"></i>
+				</div>
+				<div class="div">
+					<h5>Confirm Password</h5>
+					<input type="password" name="password2" class="input" value="{{{password2}}}">
+				</div>
+			</div>
+			<a href="/users/login">Login</a>
+			<input type="submit" class="btn" value="Register">
+		</form>
+	</div>
+</div>
+<script type="text/javascript" src="http://localhost:3000/js/main.js"></script>
