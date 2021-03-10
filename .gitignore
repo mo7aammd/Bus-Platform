@@ -7,7 +7,9 @@ yarn-error.log*
 lerna-debug.log*
 
 #public folder
-public/
+public/*
+public/images/*
+profile/*
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
