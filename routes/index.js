@@ -4,7 +4,9 @@ const { ensureAuth} = require('../config/auth');
 const Trip = require('../models/Trip');
 
 router.get('/', ensureAuth, (req, res) => {
-    res.render('home');
+    res.render('home',{
+        image:req.user.imageUrl
+    });
 })
 
 router.get('/dashboard', ensureAuth, async (req, res) => {
@@ -25,11 +27,14 @@ router.get('/dashboard', ensureAuth, async (req, res) => {
     .then(trips =>{
         //console.log(trips);
         trips.forEach(trip => trip.date = new Date(trip.date).toLocaleString('en-US'));
-        res.render('dashboard',{ 
+        res.render('dashboard',{
+            image:req.user.imageUrl,
             trips: trips,
             count: count});
     }).catch(err =>{
-        res.render('dashboard');
+        res.render('dashboard',{
+            image:req.user.imageUrl
+        });
     }); 
 })
 

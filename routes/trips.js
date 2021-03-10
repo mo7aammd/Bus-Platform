@@ -8,6 +8,7 @@ const cities = [{ name: "Mukalla" }, { name: "Aden" }, { name: "Sanaa" }];
 //GET trips/add
 router.get("/add", ensureAuth, (req, res) => {
   res.render("trips/add", {
+    image:req.user.imageUrl,
     cities: cities,
     from: "Mukalla",
     to: "Mukalla",
@@ -30,6 +31,7 @@ router.post("/add", ensureAuth, (req, res) => {
 
   if (errors.length > 0) {
     res.render("trips/add", {
+      image:req.user.imageUrl,
       errors,
       cities,
       from,
@@ -75,6 +77,7 @@ router.get("/edit/:id", ensureAuth, async (req, res) => {
     return res.redirect("/dashboard");
   }
   res.render("trips/edit", {
+    image:req.user.imageUrl,
     cities,
     tripId: trip._id,
     from: trip.from,
@@ -103,6 +106,7 @@ router.put("/edit", ensureAuth, async (req, res) => {
 
   if (errors.length > 0) {
     res.render("trips/edit", {
+      image:req.user.imageUrl,
       errors,
       cities,
       tripId,
@@ -126,6 +130,7 @@ router.put("/edit", ensureAuth, async (req, res) => {
     if (!result) {
       errors.push({ msg: "Trip not edited try again" });
       res.render("trips/edit", {
+        image:req.user.imageUrl,
         errors,
         cities,
         tripId,
