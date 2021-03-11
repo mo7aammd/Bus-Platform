@@ -37,20 +37,25 @@
     </tbody>
   </table>
 </div>
-<div class="container">
+
+<div class="pagination pagination-centered">
   <nav aria-label="...">
     <ul class="pagination">
-      <li class="page-item disabled">
-        <a class="page-link" href="#" tabindex="-1">Previous</a>
-      </li>
-      <li class="page-item"><a class="page-link" href="#">1</a></li>
-      <li class="page-item active">
-        <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="page-item"><a class="page-link" href="#">3</a></li>
-      <li class="page-item">
-        <a class="page-link" href="#">Next</a>
-      </li>
+      {{#paginate pagination type="first"}}
+      <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link" href="?p={{n}}">First</a></li>
+      {{/paginate}}
+      {{#paginate pagination type="previous"}}
+      <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link" href="?p={{n}}">Prev</a></li>
+      {{/paginate}}
+      {{#paginate pagination type="middle" limit="7"}}
+      <li {{#if active}}class="page-item active" {{/if}}><a class="page-link" href="?p={{n}}">{{n}}</a></li>
+      {{/paginate}}
+      {{#paginate pagination type="next"}}
+      <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link" href="?p={{n}}">Next</a></li>
+      {{/paginate}}
+      {{#paginate pagination type="last"}}
+      <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link" href="?p={{n}}">Last</a></li>
+      {{/paginate}}
     </ul>
   </nav>
 </div>
