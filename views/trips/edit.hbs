@@ -20,13 +20,21 @@
       </select>
     </div>
     <div class="form-group">
+      <div class="input-group-addon">$ Price</div>
+      <input type="number" class="form-control" name="price" placeholder="Amount" value="{{{price}}}">
+    </div>
+    <div class="form-group">
+      <label for="tripSelectSeats">Seats</label>
+      <select class="form-control" name="seats" id="tripSelectSeats" value="{{{seats}}}">
+        {{#each seatTypes}}
+        <option {{../prefix}}{{selectCity ../seats name}}>{{../prefix}}{{ name }}</option>
+        {{/each}}
+      </select>
+    </div>
+    <div class="form-group">
       <label for="tripdatetime">date and time</label>
-      <input class='form-control' type="datetime-local" id="tripdatetime" name="tripdatetime" dirname={{tripdatetime}}>
+      <input class='form-control' type="datetime-local" id="tripdatetime" name="tripdatetime" value="{{tripdatetime}}">
     </div>
     <button type="submit" class="btn btn-primary">Edit</button>
   </form>
 </div>
-<script>
-  const dateTipefield = document.getElementById('tripdatetime');
-  dateTipefield.valueAsNumber = new Date(parseInt(dateTipefield.dirName));
-</script>

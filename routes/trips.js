@@ -2,26 +2,29 @@ const express = require("express");
 const router = express.Router();
 const Trip = require("../models/Trip");
 const { ensureAuth } = require("../config/auth");
+const moment = require('moment')
 
 const cities = [{ name: "Mukalla" }, { name: "Aden" }, { name: "Sanaa" }];
+const seatTypes = [{ name: 50 }, { name: 55 }, { name: 60 }];
 
 //GET trips/add
 router.get("/add", ensureAuth, (req, res) => {
   res.render("trips/add", {
     image:req.user.imageUrl,
     cities: cities,
+    seatTypes,
     from: "Mukalla",
     to: "Mukalla",
+    seats: 50
   });
 });
 
 //POST trips/add
 router.post("/add", ensureAuth, (req, res) => {
-  const { from, to, tripdatetime } = req.body;
+  const { from, to, price, seats, tripdatetime } = req.body;
   const companyId = req.user._id;
   let errors = [];
-
-  if (!from || !to || !tripdatetime) {
+  if (!from || !to || !price || !seats || !tripdatetime) {
     errors.push({ msg: "Please enter all fields" });
   }
 
@@ -30,12 +33,16 @@ router.post("/add", ensureAuth, (req, res) => {
   }
 
   if (errors.length > 0) {
+    console.log(tripdatetime)
     res.render("trips/add", {
       image:req.user.imageUrl,
       errors,
       cities,
+      seatTypes,
       from,
       to,
+      price,
+      seats,
       tripdatetime,
     });
   } else {
@@ -44,15 +51,17 @@ router.post("/add", ensureAuth, (req, res) => {
       from,
       to,
       date: tripdatetime,
+      price,
+      seatsCount: [ 0, seats]
     });
     newTrip
       .save()
       .then((trip) => {
         req.flash(
           "success_msg",
-          `New trip added ${from} ==> ${to}, ${new Date(
+          `New trip added ${from} ==> ${to} $${price} Seats: ${seats} [${new Date(
             tripdatetime
-          ).toLocaleString("en-US")}`
+          ).toLocaleString("en-US")}]`
         );
         res.redirect("/trips/add");
       })
@@ -79,16 +88,19 @@ router.get("/edit/:id", ensureAuth, async (req, res) => {
   res.render("trips/edit", {
     image:req.user.imageUrl,
     cities,
+    seatTypes,
     tripId: trip._id,
     from: trip.from,
     to: trip.to,
-    tripdatetime: new Date(trip.date).getTime(),
+    price: trip.price,
+    seats: trip.seatsCount[1],
+    tripdatetime: moment(trip.date).format('YYYY-MM-DDThh:mm'),
   });
 });
 //PUT trips/edit
 router.put("/edit", ensureAuth, async (req, res) => {
   const companyId = req.user._id;
-  const { tripId, from, to, tripdatetime } = req.body;
+  const { tripId, from, to, price, seats, tripdatetime } = req.body;
   let errors = [];
 
   if (!tripId) {
@@ -96,7 +108,7 @@ router.put("/edit", ensureAuth, async (req, res) => {
     return res.redirect("/dashboard");
   }
 
-  if (!from || !to || !tripdatetime) {
+  if (!from || !to || !price || !seats || !tripdatetime) {
     errors.push({ msg: "Please enter all fields" });
   }
 
@@ -105,14 +117,18 @@ router.put("/edit", ensureAuth, async (req, res) => {
   }
 
   if (errors.length > 0) {
+    console.log(moment(tripdatetime).format('YYYY-MM-DDThh:mm'));
     res.render("trips/edit", {
       image:req.user.imageUrl,
       errors,
       cities,
+      seatTypes,
       tripId,
       from,
       to,
-      tripdatetime: new Date(tripdatetime).getTime(),
+      price,
+      seats,
+      tripdatetime: moment(tripdatetime).format('YYYY-MM-DDThh:mm'),
     });
   } else {
     const trip = await Trip.findOne({
@@ -125,6 +141,8 @@ router.put("/edit", ensureAuth, async (req, res) => {
     }
     trip.from = from;
     trip.to = to;
+    trip.price = price;
+    trip.seatsCount = [ trip.seatsCount[0], seats];
     trip.date = tripdatetime;
     const result = await trip.save();
     if (!result) {
@@ -133,10 +151,13 @@ router.put("/edit", ensureAuth, async (req, res) => {
         image:req.user.imageUrl,
         errors,
         cities,
+        seatTypes,
         tripId,
         from,
         to,
-        tripdatetime: new Date(trip.date).getTime(),
+        price,
+        seats,
+        tripdatetime: moment(tripdatetime).format('YYYY-MM-DDThh:mm'),
       });
     } else {
       req.flash("success_msg", "Trip successfully edited");

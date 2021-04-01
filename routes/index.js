@@ -9,41 +9,6 @@ router.get("/", ensureAuth, (req, res) => {
   });
 });
 
-router.get("/dash", ensureAuth, async (req, res) => {
-  const pageNumber = 1;
-  const pageSize = 10;
-  const { page = 1, limit = 10 } = req.query;
-
-  let count = await Trip.find({
-    companyId: req.user._id,
-  }).countDocuments();
-
-  count = count / pageSize;
-  Trip.find({
-    companyId: req.user._id,
-  })
-    .skip((pageNumber - 1) * pageSize)
-    .limit(pageSize)
-    .select({ from: 1, to: 1, date: 1 })
-    .lean()
-    .then((trips) => {
-      //console.log(trips);
-      trips.forEach(
-        (trip) => (trip.date = new Date(trip.date).toLocaleString("en-US"))
-      );
-      res.render("dashboard", {
-        image: req.user.imageUrl,
-        trips: trips,
-        count: count,
-      });
-    })
-    .catch((err) => {
-      res.render("dashboard", {
-        image: req.user.imageUrl,
-      });
-    });
-});
-
 router.get("/dashboard", ensureAuth, async (req, res) => {
   const { p = 1, limit = 10 } = req.query;
 
@@ -60,6 +25,10 @@ router.get("/dashboard", ensureAuth, async (req, res) => {
   if (!trips || !count) {
     return res.render("dashboard", {
       image: req.user.imageUrl,
+      pagination: {
+        page: p,
+        pageCount: count === 0 ? 1 : Math.ceil(count / limit),
+      },
     });
   }
 
@@ -70,9 +39,9 @@ router.get("/dashboard", ensureAuth, async (req, res) => {
     image: req.user.imageUrl,
     trips: trips,
     pagination: {
-        page: p,
-        pageCount: Math.ceil(count / limit)
-      }
+      page: p,
+      pageCount: count === 0 ? 1 : Math.ceil(count / limit),
+    },
   });
 });
 

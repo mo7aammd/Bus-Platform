@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const TripSchema = new mongoose.Schema({
   companyId: {
     type: mongoose.SchemaTypes.ObjectId,
+    ref: "Company",
     required: true,
   },
   from: {
@@ -17,8 +18,12 @@ const TripSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  count: {
-    type: mongoose.SchemaTypes.Array,
+  price: {
+    type: mongoose.SchemaTypes.Number,
+    required: true,
+  },
+  seatsCount: {
+    type: [mongoose.SchemaTypes.Number],
     required: true,
   },
   createdAt: {

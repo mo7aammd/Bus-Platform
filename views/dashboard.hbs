@@ -8,6 +8,7 @@
 </div>
 <div class="container">
   {{> messages }}
+  {{#if trips}}
   <table class="table table-hover table-dark">
     <thead>
       <tr>
@@ -15,27 +16,32 @@
         <th scope="col">From</th>
         <th scope="col">To</th>
         <th scope="col">Date</th>
-        <th scope="col">Reservation Count</th>
+        <th scope="col">Price</th>
+        <th scope="col">Reservation</th>
         <th scope="col">Edit</th>
       </tr>
     </thead>
     <tbody>
-      {{#if trips}}
       {{#each trips}}
       <tr class="border-bottom-danger">
         <th scope="row">{{../prefix}}{{_id}}</th>
         <td>{{../prefix}}{{from}}</td>
         <td>{{../prefix}}{{to}}</td>
         <td>{{../prefix}}{{date}}</td>
-        <td>50/35</td>
+        <td style="color:rgb(49, 118, 247);">${{../prefix}}{{price}}</td>
+        <td>
+          <a class="btn btn-info btn-mini waves-effect waves-light" href="/reservations/{{{ _id }}}">view</a>
+          {{../prefix}}{{seatsCount}}
+        </td>
         <td>
           <a class="btn btn-primary btn-xs" href="/trips/edit/{{{ _id }}}">edit</a>
         </td>
       </tr>
       {{/each}}
-      {{/if}}
     </tbody>
   </table>
+  {{/if}}
+  
 </div>
 
 <div class="pagination pagination-centered">

@@ -21,6 +21,7 @@ connectDB();
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
+
 // Method override POST ==> PUT,DELETE
 app.use(methodOverride(function (req, res) {
   if (req.body && typeof req.body === 'object' && '_method' in req.body) {
@@ -77,5 +78,10 @@ app.set('view engine', '.hbs');
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
 app.use('/trips', require('./routes/trips'));
+app.use('/reservations', require('./routes/reservations'));
+
+//API
+app.use('/api/trips', require('./api/trips'))
+app.use('/api/reservations', require('./api/reservations'))
 
 app.listen(PORT, () => console.log(`server listening at http://localhost:${PORT}`))
