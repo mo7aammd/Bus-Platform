@@ -5,6 +5,15 @@
   {{> analytics }}
   <hr>
   <a class="btn btn-warning float-right" href="/trips/add">New Trip</a>
+  <div class="row">
+    <div class="col-sm-12 col-xl-8">
+      <div class="input-daterange input-group" id="datepicker">
+        <input type="datetime-local" class="input-sm form-control" name="start">
+        <span class="input-group-addon">To</span>
+        <input type="datetime-local" class="input-sm form-control" name="end">
+      </div>
+    </div>
+  </div>
 </div>
 <div class="container">
   {{> messages }}
@@ -41,7 +50,7 @@
     </tbody>
   </table>
   {{/if}}
-  
+
 </div>
 
 <div class="pagination pagination-centered">

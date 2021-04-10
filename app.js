@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+app.server = require('http').createServer(app);
 const exphbs  = require('express-handlebars');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
@@ -83,5 +84,13 @@ app.use('/reservations', require('./routes/reservations'));
 //API
 app.use('/api/trips', require('./api/trips'))
 app.use('/api/reservations', require('./api/reservations'))
+app.use('/api/auth', require('./api/auth'))
 
-app.listen(PORT, () => console.log(`server listening at http://localhost:${PORT}`))
+//app.listen(PORT, () => console.log(`server listening at http://localhost:${PORT}`))
+app.listen( PORT, '0.0.0.0',function(){
+  app.server.close(function(){
+      app.server.listen(5001,'192.168.1.2');
+      console.log(`server listening at http://localhost:${PORT}`);
+    }
+  )
+})

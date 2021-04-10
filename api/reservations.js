@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const Trip = require("../models/Trip");
 const Reservation = require("../models/Reservation");
+const { auth } = require('../config/authJWT')
 
-router.post("/:id", async (req, res) => {
+router.post("/:id", auth, async (req, res) => {
   const { id } = req.params;
   const trip = await Trip.findOne({_id: id});
   if(!trip){
