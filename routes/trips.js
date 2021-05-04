@@ -22,7 +22,7 @@ router.get("/add", ensureAuth, (req, res) => {
 //POST trips/add
 router.post("/add", ensureAuth, (req, res) => {
   const { from, to, price, seats, tripdatetime } = req.body;
-  const companyId = req.user._id;
+  const company = req.user._id;
   let errors = [];
   if (!from || !to || !price || !seats || !tripdatetime) {
     errors.push({ msg: "Please enter all fields" });
@@ -47,7 +47,7 @@ router.post("/add", ensureAuth, (req, res) => {
     });
   } else {
     const newTrip = new Trip({
-      companyId,
+      company,
       from,
       to,
       date: tripdatetime,
@@ -75,11 +75,11 @@ router.post("/add", ensureAuth, (req, res) => {
 //GET trips/edit
 router.get("/edit/:id", ensureAuth, async (req, res) => {
   const tripId = req.params.id;
-  const companyId = req.user._id;
+  const company = req.user._id;
 
   const trip = await Trip.findOne({
     _id: tripId,
-    companyId: companyId,
+    company,
   }).lean();
   if (!trip) {
     req.flash("error_msg", "Trip not found");
@@ -99,7 +99,7 @@ router.get("/edit/:id", ensureAuth, async (req, res) => {
 });
 //PUT trips/edit
 router.put("/edit", ensureAuth, async (req, res) => {
-  const companyId = req.user._id;
+  const company = req.user._id;
   const { tripId, from, to, price, seats, tripdatetime } = req.body;
   let errors = [];
 
@@ -133,7 +133,7 @@ router.put("/edit", ensureAuth, async (req, res) => {
   } else {
     const trip = await Trip.findOne({
       _id: tripId,
-      companyId: companyId,
+      company,
     });
     if (!trip) {
       req.flash("error_msg", "Trip not found");

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const TripSchema = new mongoose.Schema({
-  companyId: {
+  company: {
     type: mongoose.SchemaTypes.ObjectId,
     ref: "Company",
     required: true,

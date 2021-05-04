@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+var Fawn = require("Fawn");
 
 const connectDB = async () => {
   try {
@@ -7,7 +8,7 @@ const connectDB = async () => {
       useUnifiedTopology: true,
       useFindAndModify: false,
     })
-
+    Fawn.init(mongoose);
     console.log(`MongoDB Connected: ${conn.connection.host}`)
   } catch (err) {
     console.error(err)

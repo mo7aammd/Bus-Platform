@@ -72,7 +72,7 @@ router.post('/register', upload.single("file"), async function (req, res, next) 
 
   const user = _.pick(customer, ['name', 'email', 'imageUrl']);
   const token = signToken(customer);
-  user.token = token;
+  user.token = 'Bearer '+ token;
   res.status(200).json({user});
 
 },(error, req, res, next) => {

@@ -3,14 +3,16 @@ const mongoose = require("mongoose");
 const PaymentSchema = new mongoose.Schema({
   from: {
     type: mongoose.SchemaTypes.ObjectId,
+    ref: "Company",
     required: true,
   },
   to: {
     type: mongoose.SchemaTypes.ObjectId,
+    ref: "Customer",
     required: true,
   },
   amount: {
-    type: mongoose.SchemaTypes.Number,
+    type: mongoose.Types.Decimal128,
     required: true,
   },
   createdAt: {

@@ -1,18 +1,23 @@
 const mongoose = require("mongoose");
 
 const ReservationSchema = new mongoose.Schema({
-  tripId: {
+  trip: {
     type: mongoose.SchemaTypes.ObjectId,
     ref:'Trip',
     required: true,
   },
-  customerId: {
+  customer: {
     type: mongoose.SchemaTypes.ObjectId,
+    ref: "Customer",
     required: true,
   },
-  paymentId: {
+  payment: {
     type: mongoose.SchemaTypes.ObjectId,
     ref:'Payment',
+    required: true,
+  },
+  seats: {
+    type: mongoose.SchemaTypes.Number,
     required: true,
   },
   createdAt: {
