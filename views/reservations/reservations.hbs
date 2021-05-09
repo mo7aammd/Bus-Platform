@@ -3,6 +3,9 @@
         <h1 class="text-center" style="color:#fff">Reservations</h1>
     </div>
     <hr>
+    <div>
+        <a class="btn btn-warning float-right" href="/reservations/new/{{{tripId}}}">New Reservation</a>
+    </div>
 </div>
 <div class="container">
     {{> messages }}
@@ -11,8 +14,9 @@
         <thead>
             <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Trip ID</th>
+                <th scope="col">Trip</th>
                 <th scope="col">Cutomer Name</th>
+                <th scope="col">Seats</th>
                 <th scope="col">Amount</th>
                 <th scope="col">Date</th>
             </tr>
@@ -21,9 +25,10 @@
             {{#each reservations}}
             <tr class="border-bottom-danger">
                 <th scope="row">{{../prefix}}{{_id}}</th>
-                <td>{{../prefix}}{{tripId}}</td>
-                <td>{{../prefix}}{{customerId}}</td>
-                <td style="color:rgb(49, 118, 247);">${{../prefix}}{{amount}}</td>
+                <td>{{../prefix}}{{trip.from}} ==> {{trip.to}}</td>
+                <td>{{../prefix}}{{customer.name}}</td>
+                <td>{{../prefix}}{{seats}}</td>
+                <td style="color:rgb(49, 118, 247);">${{../prefix}}{{payment.amount}}</td>
                 <td>{{../prefix}}{{createdAt}}</td>
             </tr>
             {{/each}}

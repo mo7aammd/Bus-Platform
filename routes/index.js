@@ -11,7 +11,6 @@ router.get("/", ensureAuth, (req, res) => {
 
 router.get("/dashboard", ensureAuth, async (req, res) => {
   const { p = 1, limit = 10 } = req.query;
-  console.log(req.body)
   const trips = await Trip.find({ company: req.user._id })
     .limit(limit * 1)
     .skip((p - 1) * limit)

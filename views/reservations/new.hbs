@@ -1,0 +1,46 @@
+<div class="container">
+    {{> messages }}
+    <form action="/reservations/{{tripId}}" method="post">
+        <div class="form-group">
+            <label for="reservationName">Name</label>
+            <input class="form-control" name="customerName" id="reservationtName" value="{{{customerName}}}"
+                placeholder="Customer Name" </div>
+            <div class="form-group">
+                <label for="reservationPhone">Phone</label>
+                <input class="form-control" type="number" name="phone" id="reservationtPhone" value="{{{phone}}}"
+                    placeholder="Phone Number">
+            </div>
+            <div class="form-group">
+                <label for="reservationSeats">Seats</label>
+                <input id="ticketSeats" type="hidden" value="{{{seats}}}" />
+                <select class="form-control" onchange="updatePrice()" name="seats" id="reservationSeats"
+                    value="{{seats}}">
+                    {{#times avaliableSeats}}
+                    <option>{{this}}</option>
+                    {{/times}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="reservationTotalPrice">Total price:</label>
+                <label for="reservationPrice" id="totalPrice" style="font-size: large;color:red">{{price}}</label>
+                <input id="ticketPrice" type="hidden" value="{{{price}}}">
+            </div>
+            <button type="submit" class="btn btn-primary">Reserve</button>
+    </form>
+</div>
+<script>
+    const selectedSeats = document.getElementById('ticketSeats').value;
+    selectElement('reservationSeats', selectedSeats)
+    function selectElement(id, valueToSelect) {
+        let element = document.getElementById(id);
+        element.value = valueToSelect;
+        const seatsNum = parseInt(document.getElementById('reservationSeats').value);
+        ticketPrice = parseInt(document.getElementById('ticketPrice').value);
+        document.getElementById('totalPrice').innerText = seatsNum * ticketPrice;
+    }
+    function updatePrice() {
+        const seatsNum = parseInt(document.getElementById('reservationSeats').value);
+        ticketPrice = parseInt(document.getElementById('ticketPrice').value);
+        document.getElementById('totalPrice').innerText = seatsNum * ticketPrice;
+    }
+</script>

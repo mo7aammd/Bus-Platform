@@ -68,7 +68,8 @@ const hbs = exphbs.create({
   partialsDir: __dirname + '/views/partials/',
   helpers: {
       selectCity: require('./views/helpers/selectCity'),
-      paginate:require('handlebars-paginate')
+      paginate:require('handlebars-paginate'),
+      times: require('./views/helpers/times')
   }
 });
 
