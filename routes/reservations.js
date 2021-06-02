@@ -11,6 +11,7 @@ const {
 const { ensureAuth } = require("../config/auth");
 const validObjectId = require("../models/validateObjectId");
 
+//Reservations List Page for specific ID trip
 router.get("/:id", ensureAuth, async (req, res) => {
   const { p = 1, limit = 10 } = req.query;
   const tripId = req.params.id;
@@ -58,6 +59,53 @@ router.get("/:id", ensureAuth, async (req, res) => {
   });
 });
 
+//Reservations by Company List Page for specific ID trip
+router.get("/comp/:id", ensureAuth, async (req, res) => {
+  const { p = 1, limit = 10 } = req.query;
+  const tripId = req.params.id;
+  if (!validObjectId(tripId)) return res.status(400).send("Bad Request");
+
+  const trip = await Trip.findOne({ _id: tripId });
+  if (!trip) return res.status(400).send("Trip Not Found");
+  if (trip.company.toString() !== req.user._id.toString())
+    return res.status(401).send("Unauthorized");
+
+  const reservations = await ReservationComp.find({ trip: tripId })
+    .populate("trip", "from to date -_id", Trip)
+    .limit(limit * 1)
+    .skip((p - 1) * limit)
+    .lean()
+    .exec();
+
+  const count = await ReservationComp.find({ trip: tripId }).countDocuments();
+
+  if (!reservations || !count) {
+    return res.render("reservations/reservationsComp", {
+      image: req.user.imageUrl,
+      tripId,
+      pagination: {
+        page: p,
+        pageCount: count === 0 ? 1 : Math.ceil(count / limit),
+      },
+    });
+  }
+
+  reservations.forEach(
+    (it) => (it.createdAt = new Date(it.createdAt).toLocaleString("en-US"))
+  );
+
+  res.render("reservations/reservationsComp", {
+    image: req.user.imageUrl,
+    reservations,
+    tripId,
+    pagination: {
+      page: p,
+      pageCount: count === 0 ? 1 : Math.ceil(count / limit),
+    },
+  });
+});
+
+//Reservation New Page for specific ID trip
 router.get("/new/:id", ensureAuth, async (req, res) => {
   const tripId = req.params.id;
   if (!validObjectId(tripId)) return res.status(400).send("Bad Request");
@@ -78,10 +126,11 @@ router.get("/new/:id", ensureAuth, async (req, res) => {
     tripId,
     avaliableSeats,
     price: trip.price,
-    seats: 1
+    seats: 1,
   });
 });
 
+//Reservation handler
 router.post("/:id", ensureAuth, async (req, res) => {
   const tripId = req.params.id;
   const { customerName, phone, seats } = req.body;
@@ -137,8 +186,18 @@ router.post("/:id", ensureAuth, async (req, res) => {
           $inc: { "seatsCount.0": parseInt(seats) },
         }
       )
+      .update(
+        "accounts",
+        { owner: req.user._id },
+        {
+          $inc: { 
+            total: reservation.amount, 
+            internalPayments: reservation.amount 
+          },
+        }
+      )
       .run();
-  } catch (reservation) {
+  } catch (ex) {
     req.flash("error_msg", `Reservation doesn't Complete`);
     return res.redirect("/reservations/new/" + tripId);
   }

@@ -69,7 +69,8 @@ const hbs = exphbs.create({
   helpers: {
       selectCity: require('./views/helpers/selectCity'),
       paginate:require('handlebars-paginate'),
-      times: require('./views/helpers/times')
+      times: require('./views/helpers/times'),
+      formateSeats: require('./views/helpers/formateSeats')
   }
 });
 
@@ -90,7 +91,7 @@ app.use('/api/auth', require('./api/auth'))
 //app.listen(PORT, () => console.log(`server listening at http://localhost:${PORT}`))
 app.listen( PORT, '0.0.0.0',function(){
   app.server.close(function(){
-      app.server.listen(5001,'192.168.1.2');
+      //app.server.listen(5001,'192.168.1.2');
       console.log(`server listening at http://localhost:${PORT}`);
     }
   )

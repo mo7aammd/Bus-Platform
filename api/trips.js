@@ -13,6 +13,7 @@ router.get("/", async (req, res) => {
       $gte: new Date(start), 
       $lt: moment(end, 'YYYY-MM-DD').endOf('day').toDate()
   } })
+    .sort({ date: 1 })
     .populate('company','companyName imageUrl -_id')
     .select('from to date seatsCount price');
 

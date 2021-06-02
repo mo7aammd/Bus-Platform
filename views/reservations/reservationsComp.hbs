@@ -1,13 +1,10 @@
 <div class="container">
     <div class="homeCard">
-        <h1 class="text-center" style="color:#fff">Reservations</h1>
+        <h1 class="text-center" style="color:#fff">Reservations by Company</h1>
     </div>
     <hr>
     <div>
         <a class="btn btn-warning float-right" href="/reservations/new/{{{tripId}}}">New Reservation</a>
-    </div>
-    <div class="row">
-        <a class="btn btn-inverse float-right" href="/reservations/comp/{{{tripId}}}">Reservation by company</a>
     </div>
 </div>
 <div class="container">
@@ -19,6 +16,7 @@
                 <th scope="col">ID</th>
                 <th scope="col">Trip</th>
                 <th scope="col">Cutomer Name</th>
+                <th scope="col">Phone</th>
                 <th scope="col">Seats</th>
                 <th scope="col">Amount</th>
                 <th scope="col">Date</th>
@@ -29,9 +27,10 @@
             <tr class="border-bottom-danger">
                 <th scope="row">{{../prefix}}{{_id}}</th>
                 <td>{{../prefix}}{{trip.from}} ==> {{trip.to}}</td>
-                <td>{{../prefix}}{{customer.name}}</td>
+                <td>{{../prefix}}{{customerName}}</td>
+                <td>{{../prefix}}{{phone}}</td>
                 <td>{{../prefix}}{{seats}}</td>
-                <td style="color:rgb(49, 118, 247);">${{../prefix}}{{payment.amount}}</td>
+                <td style="color:rgb(49, 118, 247);">${{../prefix}}{{amount}}</td>
                 <td>{{../prefix}}{{createdAt}}</td>
             </tr>
             {{/each}}

@@ -3,6 +3,7 @@ const router = express.Router();
 const Trip = require("../models/Trip");
 const Company = require("../models/Company");
 const Reservation = require("../models/Reservation");
+const Account = require("../models/Account");
 const Payment = require("../models/Payment");
 var Fawn = require("Fawn");
 const { auth } = require('../config/authJWT');
@@ -91,6 +92,12 @@ router.post('/reserve' , auth, async(req, res) => {
               .save('reservations', reservation)
               .update("trips", {_id: trip._id}, {
                 $inc: {'seatsCount.0': parseInt(ticketCount)}
+              })
+              .update("accounts", {owner: trip.company}, {
+                $inc: { 
+                  total: payment.amount, 
+                  inAccount: payment.amount 
+                }
               })
               .run();
             res.json({

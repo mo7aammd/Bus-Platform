@@ -2,11 +2,18 @@ const express = require("express");
 const router = express.Router();
 const { ensureAuth } = require("../config/auth");
 const Trip = require("../models/Trip");
+const Reservations = require("../models/Reservation");
+const { ReservationComp } = require("../models/ReservationComp");
+const Account = require("../models/Account");
+const Payment = require("../models/Payment");
+const moment = require("moment");
 
-router.get("/", ensureAuth, (req, res) => {
-  res.render("home", {
-    image: req.user.imageUrl,
-  });
+router.get("/", (req, res) => {
+  res.render("home", {layout: false});
+});
+
+router.get("/about", (req, res) => {
+  res.render("about", {layout: false});
 });
 
 router.get("/dashboard", ensureAuth, async (req, res) => {
@@ -17,6 +24,25 @@ router.get("/dashboard", ensureAuth, async (req, res) => {
     .lean()
     .exec();
 
+  tripsIdes = trips.map((it) => it._id);
+  const reservations = await Reservations.find({ trip: tripsIdes[0] }).populate(
+    "payment",
+    "amount createdAt -_id",
+    Payment
+  );
+
+  const companyAccount = await Account.findOne({ owner: req.user._id });
+  const totalPayments = companyAccount.total;
+  const inAccount = companyAccount.inAccount;
+  const internalPayments = companyAccount.internalPayments;
+
+  let last30DaysPayments = reservations
+    .filter((it) =>
+      moment(it.payment.createdAt).isAfter(moment().subtract(30, "days"))
+    )
+    .map((it) => it.payment.amount)
+    .reduce((a, b) => (a += parseFloat(b)), 0);
+
   const count = await Trip.find({
     company: req.user._id,
   }).countDocuments();
@@ -24,6 +50,10 @@ router.get("/dashboard", ensureAuth, async (req, res) => {
   if (!trips || !count) {
     return res.render("dashboard", {
       image: req.user.imageUrl,
+      totalPayments,
+      inAccount,
+      internalPayments,
+      last30DaysPayments,
       pagination: {
         page: p,
         pageCount: count === 0 ? 1 : Math.ceil(count / limit),
@@ -37,6 +67,10 @@ router.get("/dashboard", ensureAuth, async (req, res) => {
   res.render("dashboard", {
     image: req.user.imageUrl,
     trips: trips,
+    totalPayments,
+    inAccount,
+    internalPayments,
+    last30DaysPayments,
     pagination: {
       page: p,
       pageCount: count === 0 ? 1 : Math.ceil(count / limit),
