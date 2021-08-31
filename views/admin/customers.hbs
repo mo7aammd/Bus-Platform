@@ -1,50 +1,41 @@
 <div class="container">
     <div class="homeCard">
-        <h1 class="text-center" style="color:#fff">Reservations by Company</h1>
+        <h1 class="text-center" style="color:#fff">Manage Customers</h1>
     </div>
-    <hr>
-    <div>
-        <a class="btn btn-warning float-right" href="/reservations/new/{{{tripId}}}">New Reservation</a>
-    </div>
-</div>
-<div class="container">
     {{> messages }}
-    {{#if reservations}}
-    <table class="table table-hover table-dark">
+    {{#if customers}}
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Trip</th>
-                <th scope="col">Cutomer Name</th>
-                <th scope="col">Phone</th>
-                <th scope="col">Seats</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Date</th>
-                <th scope="col">ticket</th>
+                <th scope="col">Profile</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Details</th>
             </tr>
         </thead>
         <tbody>
-            {{#each reservations}}
+            {{#each customers}}
             <tr class="border-bottom-danger">
                 <th scope="row">{{../prefix}}{{_id}}</th>
-                <td>{{../prefix}}{{trip.from}} ==> {{trip.to}}</td>
-                <td>{{../prefix}}{{customerName}}</td>
-                <td>{{../prefix}}{{phone}}</td>
-                <td>{{../prefix}}{{seats}}</td>
-                <td style="color:rgb(49, 118, 247);">{{../prefix}}{{amount}} $</td>
+                <td>{{../prefix}}<img class="nav-item py-md-2" src="/profile/{{{imageUrl}}}" alt=""
+                        style="width: 35px;border-radius:100%;"></td>
+                <td>{{../prefix}}{{name}}</td>
+                <td>{{../prefix}}{{email}}</td>
                 <td>{{../prefix}}{{createdAt}}</td>
                 <td>
-                    <a class="btn btn-info btn-mini waves-effect waves-light" href="/reservations/generateview/{{{ _id }}}" target="_blank">print</a>
+                    <a class="btn btn-primary btn-xs" href="/admin/customer/{{{ _id }}}">view</a>
                 </td>
             </tr>
             {{/each}}
         </tbody>
     </table>
     {{else}}
-    <h3 style="text-align: center;margin: 150px">No Reservations Available!</h3>
+    <h3 style="text-align: center;margin: 150px">No Customers Available!</h3>
     {{/if}}
-</div>
 
+</div>
 <div class="pagination pagination-centered">
     <nav aria-label="...">
         <ul class="pagination">

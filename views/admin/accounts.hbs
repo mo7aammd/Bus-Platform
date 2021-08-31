@@ -1,0 +1,88 @@
+<div class="container">
+     <div class="homeCard">
+        <h1 class="text-center" style="color:#fff">Accounts</h1>
+    </div>
+    {{> messages }}
+    {{#if accounts}}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Profile</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Total</th>
+                <th scope="col" style="color: red;">in Account</th>
+                <th scope="col">Internal Payments</th>
+                <th scope="col">Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each accounts}}
+            <tr class="border-bottom-danger">
+                <td>{{../prefix}}<img class="nav-item py-md-2" src="/profile/{{{owner.imageUrl}}}" alt=""
+                        style="width: 35px;border-radius:100%;"></td>
+                <td>{{../prefix}}{{owner.companyName}}</td>
+                <td>{{../prefix}}{{owner.email}}</td>
+                <td>{{../prefix}}{{total}}</td>
+                <td style="color: red;">{{../prefix}}{{inAccount}}</td>
+                <td>{{../prefix}}{{internalPayments}}</td>
+                <td>
+                    <a class="btn btn-primary btn-xs" href="/admin/account/{{{ _id }}}">view</a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    {{else}}
+    <h3 style="text-align: center;margin: 150px">No Companies Available!</h3>
+    {{/if}}
+
+</div>
+<div class="pagination pagination-centered">
+    <nav aria-label="...">
+        <ul class="pagination">
+            {{#paginate pagination type="first"}}
+            <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link" href="?p={{n}}">First</a></li>
+            {{/paginate}}
+            {{#paginate pagination type="previous"}}
+            <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link" href="?p={{n}}">Prev</a></li>
+            {{/paginate}}
+            {{#paginate pagination type="middle" limit="7"}}
+            <li {{#if active}}class="page-item active" {{/if}}><a class="page-link" href="?p={{n}}">{{n}}</a></li>
+            {{/paginate}}
+            {{#paginate pagination type="next"}}
+            <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link" href="?p={{n}}">Next</a></li>
+            {{/paginate}}
+            {{#paginate pagination type="last"}}
+            <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link" href="?p={{n}}">Last</a></li>
+            {{/paginate}}
+        </ul>
+    </nav>
+</div>
+<style>
+  .homeCard {
+    padding: 30px;
+    margin-bottom: 30px;
+    font-size: 21px;
+    font-weight: 200;
+    margin-top: 20px;
+    border-radius: 20px;
+    background: linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
+    background-size: 170% 170%;
+    animation: animate 15s ease infinite;
+  }
+
+  @keyframes animate {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+</style>

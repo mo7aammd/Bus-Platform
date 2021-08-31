@@ -1,0 +1,38 @@
+<div class="container">
+    <div class="p-20 z-depth-top-0 waves-effect" style="background-color: #e6ecff">
+        {{> messages }}
+        <form action="/admin/account" method="POST">
+            <input type="hidden" name="_method" value="PUT">
+            <div>
+                <img class="nav-item py-md-2" src="/profile/{{{account.owner.imageUrl}}}" alt=""
+                    style="width: 100px;border-radius:100%;">
+            </div>
+            <div class=" form-group">
+                <label>Account ID</label>
+                <label class="form-control">{{account._id}}</label>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <label class="form-control">{{account.owner.email}}</label>
+            </div>
+            <div class="form-group">
+                <label for="companyName">Company Name</label>
+                <input type="hidden" name="accountId" value={{account._id}}>
+                <label class="form-control">{{account.owner.companyName}}</label>
+            </div>
+            <div class="form-group">
+                <label>In Account</label>
+                <label class="form-control">{{account.inAccount}}</label>
+            </div>
+            <div class="form-group">
+                <div>
+                    <label>Withdraw</label>
+                </div>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" name="withdraw" value="{{withdraw}}">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Withdraw</button>
+        </form>
+    </div>
+</div>

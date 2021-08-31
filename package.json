@@ -19,6 +19,7 @@
     "express-handlebars": "^5.2.0",
     "express-session": "^1.17.1",
     "fawn": "^2.1.5",
+    "firebase-admin": "^9.10.0",
     "handlebars-paginate": "^0.1.0",
     "joi": "^13.1.0",
     "jsonwebtoken": "^8.5.1",
@@ -31,7 +32,8 @@
     "passport-google-id-token": "^0.4.7",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "paypal-rest-sdk": "^1.8.1"
+    "paypal-rest-sdk": "^1.8.1",
+    "pdfmake": "^0.2.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"

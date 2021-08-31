@@ -1,0 +1,17 @@
+{{#if reservation}}
+<div class="container">
+    <div class="p-20 z-depth-top-0 waves-effect" style="background-color: #e6ecff">
+        <div>
+            <img class="nav-item py-md-2" src="/profile/{{{reservation.trip.company.imageUrl}}}" alt=""
+                style="width: 100px;border-radius:100%;">
+        </div>
+        <p>Customer: {{reservation.customerName}}</p>
+        <p>with Comapny: {{reservation.trip.company.companyName}}</p>
+        <p>From: {{reservation.trip.from}}</p>
+        <p>To: {{reservation.trip.to}}</p>
+        <p>Date: {{reservation.trip.date}}</p>
+        <p>Seats: {{reservation.seats}}</p>
+        <p>Payment: {{reservation.amount}} rials</p>
+    </div>
+</div>
+{{/if}}

@@ -9,6 +9,7 @@ const connectDB = require('./config/db');
 const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
+const { firebase } = require('./config/firebase');
 
 // Load config
 dotenv.config({ path: './config/config.env' })
@@ -79,14 +80,48 @@ app.set('view engine', '.hbs');
 
 //Routes
 app.use('/', require('./routes/index'));
+app.use('/admin', require('./routes/admin'));
 app.use('/users', require('./routes/users'));
 app.use('/trips', require('./routes/trips'));
 app.use('/reservations', require('./routes/reservations'));
 
 //API
-app.use('/api/trips', require('./api/trips'))
-app.use('/api/reservations', require('./api/reservations'))
-app.use('/api/auth', require('./api/auth'))
+app.use('/api/trips', require('./api/trips'));
+app.use('/api/reservations', require('./api/reservations'));
+app.use('/api/auth', require('./api/auth'));
+
+app.post('/firebase', (req, res)=>{
+  const  registrationToken = req.body.registrationToken
+  console.log(registrationToken);
+  const message = {
+    data: {
+      message: '850',
+      title: '2:45'
+    },
+    token: registrationToken
+  };
+  
+  // Send a message to the device corresponding to the provided
+  // registration token.
+  firebase.messaging().send(message)
+    .then((response) => {
+      // Response is a message ID string.
+      console.log('Successfully sent message:', response);
+      res.send("Ok")
+    })
+    .catch((error) => {
+      console.log('Error sending message:', error);
+    });
+
+});
+
+//default Route
+app.get("*", (req, res) => {
+  res.render("error", { 
+    layout: false,
+    msg:'Not Found!'}
+  )
+})
 
 //app.listen(PORT, () => console.log(`server listening at http://localhost:${PORT}`))
 app.listen( PORT, '0.0.0.0',function(){

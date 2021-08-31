@@ -1,14 +1,26 @@
 const express = require("express");
 const router = express.Router();
 const Trip = require("../models/Trip");
-const { ensureAuth } = require("../config/auth");
-const moment = require('moment')
+const Reservation = require("../models/Reservation");
+const { ensureAuth, ensureEnabled } = require("../config/auth");
+const validObjectId = require("../models/validateObjectId");
+const moment = require('moment');
+const { firebase } = require('../config/firebase');
 
-const cities = [{ name: "Mukalla" }, { name: "Aden" }, { name: "Sanaa" }];
+const cities = [
+  { name: "Mukalla" }, 
+  { name: "Aden" }, 
+  { name: "Sanaa" },
+  { name: "Sayyuwn" },
+  { name: "Alghyzh" },
+  { name: "Taiz" },
+  { name: "Dhamar" },
+  { name: "Al Hudaydah" },
+];
 const seatTypes = [{ name: 50 }, { name: 55 }, { name: 60 }];
 
 //GET trips/add
-router.get("/add", ensureAuth, (req, res) => {
+router.get("/add", ensureAuth, ensureEnabled, (req, res) => {
   res.render("trips/add", {
     image:req.user.imageUrl,
     cities: cities,
@@ -20,7 +32,7 @@ router.get("/add", ensureAuth, (req, res) => {
 });
 
 //POST trips/add
-router.post("/add", ensureAuth, (req, res) => {
+router.post("/add", ensureAuth, ensureEnabled, (req, res) => {
   const { from, to, price, seats, tripdatetime } = req.body;
   const company = req.user._id;
   let errors = [];
@@ -32,8 +44,11 @@ router.post("/add", ensureAuth, (req, res) => {
     errors.push({ msg: "Two cities are the same, Please change one" });
   }
 
+  if(moment(tripdatetime).isBefore(Date.now())){
+    errors.push({ msg: "The time is passed" });
+  }
+
   if (errors.length > 0) {
-    console.log(tripdatetime)
     res.render("trips/add", {
       image:req.user.imageUrl,
       errors,
@@ -73,10 +88,13 @@ router.post("/add", ensureAuth, (req, res) => {
   }
 });
 //GET trips/edit
-router.get("/edit/:id", ensureAuth, async (req, res) => {
+router.get("/edit/:id", ensureAuth, ensureEnabled, async (req, res) => {
   const tripId = req.params.id;
   const company = req.user._id;
-
+  if (!validObjectId(tripId)) return res.render("error",{
+    layout: false,
+    msg: 'Invalid Trip ID!'
+  });
   const trip = await Trip.findOne({
     _id: tripId,
     company,
@@ -98,7 +116,7 @@ router.get("/edit/:id", ensureAuth, async (req, res) => {
   });
 });
 //PUT trips/edit
-router.put("/edit", ensureAuth, async (req, res) => {
+router.put("/edit", ensureAuth, ensureEnabled, async (req, res) => {
   const company = req.user._id;
   const { tripId, from, to, price, seats, tripdatetime } = req.body;
   let errors = [];
@@ -116,8 +134,11 @@ router.put("/edit", ensureAuth, async (req, res) => {
     errors.push({ msg: "Two cities are the same, Please change one" });
   }
 
+  if(moment(tripdatetime).isBefore(Date.now())){
+    errors.push({ msg: "The time is passed" });
+  }
+
   if (errors.length > 0) {
-    console.log(moment(tripdatetime).format('YYYY-MM-DDThh:mm'));
     res.render("trips/edit", {
       image:req.user.imageUrl,
       errors,
@@ -143,6 +164,7 @@ router.put("/edit", ensureAuth, async (req, res) => {
     trip.to = to;
     trip.price = price;
     trip.seatsCount = [ trip.seatsCount[0], seats];
+    const oldTripDate = trip.date;
     trip.date = tripdatetime;
     const result = await trip.save();
     if (!result) {
@@ -160,9 +182,50 @@ router.put("/edit", ensureAuth, async (req, res) => {
         tripdatetime: moment(tripdatetime).format('YYYY-MM-DDThh:mm'),
       });
     } else {
+        console.log('----')
+        const reservations = await Reservation.find({ trip: trip.id })
+          .select('customer -_id')
+          .populate({
+            path: 'customer',
+            select: 'firebaseToken -_id',
+          })
+          .lean();
+
+          const tokens = reservations
+          .map (r => r = r.customer.firebaseToken)
+          .filter(r => (typeof r === 'string' && r !== '') );
+
+          const tokenSet = new Set();
+          tokens.forEach(r => tokenSet.add(r));
+          if(tokenSet.size > 0){
+          console.log(tokenSet);
+          notificationMsg = `Your Reservation from ${trip.from} to ${trip.to} has changes Dates to ${moment(tripdatetime).format('YYYY-MM-DD hh:mm A')}`;
+          sendNodtification(notificationMsg, tokens);
+      
+    }
       req.flash("success_msg", "Trip successfully edited");
       res.redirect("/dashboard");
     }
   }
 });
+async function sendNodtification(Message, token){
+  
+  const message = {
+    data: {
+      message: Message,
+      title: 'Trip Status Changed!'
+    },
+    tokens: token
+  };
+  
+  // Send a message to the device corresponding to the provided
+  // registration token.
+  firebase.messaging().sendMulticast(message)
+    .then((response) => {
+    })
+    .catch((error) => {
+      console.log('Error sending message:', error);
+    });
+
+}
 module.exports = router;

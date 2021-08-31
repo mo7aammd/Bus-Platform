@@ -31,13 +31,15 @@
                 <td>{{../prefix}}{{trip.from}} ==> {{trip.to}}</td>
                 <td>{{../prefix}}{{customer.name}}</td>
                 <td>{{../prefix}}{{seats}}</td>
-                <td style="color:rgb(49, 118, 247);">${{../prefix}}{{payment.amount}}</td>
+                <td style="color:rgb(49, 118, 247);">{{../prefix}}{{payment.amount}} $</td>
                 <td>{{../prefix}}{{createdAt}}</td>
             </tr>
             {{/each}}
 
         </tbody>
     </table>
+    {{else}}
+    <h3 style="text-align: center;margin: 150px">No Reservations Available!</h3>
     {{/if}}
 </div>
 

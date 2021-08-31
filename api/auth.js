@@ -46,7 +46,8 @@ router.post('/googletoken',
 );
 
 router.post('/register', upload.single("file"), async function (req, res, next) {
-  const { name, email, password } = req.body;
+  const { name, email, password, firebaseToken } = req.body;
+  console.log(firebaseToken);
   imageUrl = "CustomerDefalultImage";
   if(req.file){
     imageUrl = req.file.filename;
@@ -61,7 +62,8 @@ router.post('/register', upload.single("file"), async function (req, res, next) 
     name,
     email, 
     password,
-    imageUrl
+    imageUrl,
+    firebaseToken
   })
   const salt = await bcrypt.genSalt(10);
   newCustomer.password = await bcrypt.hash(newCustomer.password, salt);
@@ -80,13 +82,19 @@ router.post('/register', upload.single("file"), async function (req, res, next) 
 });
 
 router.post('/login', async (req, res)=>{
-  const { email, password } = req.body;
+  const { email, password, firebaseToken } = req.body;
 
   const { error } = validateLogin(req.body); 
   if (error) return res.status(400).send(error.details[0].message);
 
   const foundCustomer = await Customer.findOne({ email });
   if (!foundCustomer) return res.status(400).send('Invalid Email or Password');
+
+  //check firebase token
+  if(foundCustomer.firebaseToken != firebaseToken){
+    foundCustomer.firebaseToken = firebaseToken;
+    foundCustomer.save();
+  }
 
   const validPassword = await bcrypt.compare(password, foundCustomer.password);
   if(!validPassword) return res.status(400).send('Invalid Email or Password');
@@ -97,6 +105,24 @@ router.post('/login', async (req, res)=>{
   res.status(200).json({user});
 
 })
+router.post('/firebaseToken', auth, async(req, res) => {
+  const { token } = req.body;
+  const customer = await Customer.findById(req.user.id);
+  if(customer){
+    customer.firebaseToken = token;
+    customer.save();
+  }
+  res.send();
+});
+
+router.get('/deleteFirebaseLogin', auth, async(req, res) => {
+  const customer = await Customer.findById(req.user.id);
+  if(customer){
+    customer.firebaseToken = "";
+    customer.save();
+  }
+  res.send();
+});
 
 router.get('/profile', auth, async(req, res) => {
   if(!req.user) return res.status(401).send('please login!');
@@ -110,6 +136,7 @@ router.get('/profile', auth, async(req, res) => {
 function validateLogin(req) {
   const schema = {
     email: Joi.string().min(5).max(255).required().email(),
+    firebaseToken: Joi.string(),
     password: Joi.string().min(5).max(255).required()
   };
 

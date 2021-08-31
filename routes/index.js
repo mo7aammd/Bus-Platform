@@ -8,17 +8,34 @@ const Account = require("../models/Account");
 const Payment = require("../models/Payment");
 const moment = require("moment");
 
+//GET Index
 router.get("/", (req, res) => {
-  res.render("home", {layout: false});
+  res.render("home2", { layout: false });
 });
 
+//GET About
 router.get("/about", (req, res) => {
-  res.render("about", {layout: false});
+  res.render("error", { layout: false });
 });
 
+//GET Dashboard
 router.get("/dashboard", ensureAuth, async (req, res) => {
-  const { p = 1, limit = 10 } = req.query;
-  const trips = await Trip.find({ company: req.user._id })
+  const { p = 1, limit = 10, start, end } = req.query;
+  let query, startDatepicker, endDatepicker;
+  if (start && end) {
+    query = {
+      company: req.user._id,
+      date: {
+        $gte: moment(start, "YYYY-MM-DD").toDate(),
+        $lt: moment(end, "YYYY-MM-DD").endOf("day").toDate(),
+      },
+    };
+    startDatepicker = moment(start).format("YYYY-MM-DD");
+    endDatepicker = moment(end).format("YYYY-MM-DD")
+
+  } else query = { company: req.user._id };
+
+  const trips = await Trip.find(query)
     .limit(limit * 1)
     .skip((p - 1) * limit)
     .lean()
@@ -31,11 +48,6 @@ router.get("/dashboard", ensureAuth, async (req, res) => {
     Payment
   );
 
-  const companyAccount = await Account.findOne({ owner: req.user._id });
-  const totalPayments = companyAccount.total;
-  const inAccount = companyAccount.inAccount;
-  const internalPayments = companyAccount.internalPayments;
-
   let last30DaysPayments = reservations
     .filter((it) =>
       moment(it.payment.createdAt).isAfter(moment().subtract(30, "days"))
@@ -43,9 +55,12 @@ router.get("/dashboard", ensureAuth, async (req, res) => {
     .map((it) => it.payment.amount)
     .reduce((a, b) => (a += parseFloat(b)), 0);
 
-  const count = await Trip.find({
-    company: req.user._id,
-  }).countDocuments();
+  const companyAccount = await Account.findOne({ owner: req.user._id });
+  const totalPayments = companyAccount.total;
+  const inAccount = companyAccount.inAccount;
+  const internalPayments = companyAccount.internalPayments;
+
+  const count = await Trip.find(query).countDocuments();
 
   if (!trips || !count) {
     return res.render("dashboard", {
@@ -54,6 +69,10 @@ router.get("/dashboard", ensureAuth, async (req, res) => {
       inAccount,
       internalPayments,
       last30DaysPayments,
+      start,
+      end,
+      startDatepicker,
+      endDatepicker,
       pagination: {
         page: p,
         pageCount: count === 0 ? 1 : Math.ceil(count / limit),
@@ -71,6 +90,10 @@ router.get("/dashboard", ensureAuth, async (req, res) => {
     inAccount,
     internalPayments,
     last30DaysPayments,
+    start,
+    end,
+    startDatepicker,
+    endDatepicker,
     pagination: {
       page: p,
       pageCount: count === 0 ? 1 : Math.ceil(count / limit),

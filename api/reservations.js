@@ -6,7 +6,7 @@ const Reservation = require("../models/Reservation");
 const Account = require("../models/Account");
 const Payment = require("../models/Payment");
 var Fawn = require("Fawn");
-const { auth } = require('../config/authJWT');
+const { auth, ensureEnabled } = require('../config/authJWT');
 const { Transaction } = require('braintree');
 const gateway = require('../config/gateway');
 
@@ -19,7 +19,7 @@ const TRANSACTION_SUCCESS_STATUSES = [
   Transaction.Status.SettlementPending,
   Transaction.Status.SubmittedForSettlement,
 ];
-
+//GET User's Reservations 
 router.get("/", auth, async (req, res) => {
 
   const reservations = await Reservation.find({
@@ -38,10 +38,11 @@ router.get("/", auth, async (req, res) => {
   });
 
   res.send({bookings:reservations});
-  
+
 });
 
-router.get('/checkouts/new' ,auth ,(req, res) => {
+//GET Payment Token
+router.get('/checkouts/new' , auth, ensureEnabled, (req, res) => {
   gateway.clientToken.generate({}).then(({ clientToken }) => {
     const token = {
       token:clientToken
@@ -49,8 +50,8 @@ router.get('/checkouts/new' ,auth ,(req, res) => {
     res.send(JSON.stringify(token))
   });
 });
-
-router.post('/reserve' , auth, async(req, res) => {
+//POST new Reservation
+router.post('/reserve' , auth, ensureEnabled, async(req, res) => {
   // In production you should not take amounts directly from clients
   const { amount, payment_method_nonce: paymentMethodNonce, tripId, ticketCount } = req.body;
 

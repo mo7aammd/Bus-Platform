@@ -22,7 +22,7 @@
             </div>
             <div class="form-group">
                 <label for="reservationTotalPrice">Total price:</label>
-                <label for="reservationPrice" id="totalPrice" style="font-size: large;color:red">{{price}}</label>
+                <label for="reservationPrice" id="totalPrice" style="font-size: large;color:red">{{price}} rials</label>
                 <input id="ticketPrice" type="hidden" value="{{{price}}}">
             </div>
             <button type="submit" class="btn btn-primary">Reserve</button>
@@ -41,6 +41,6 @@
     function updatePrice() {
         const seatsNum = parseInt(document.getElementById('reservationSeats').value);
         ticketPrice = parseInt(document.getElementById('ticketPrice').value);
-        document.getElementById('totalPrice').innerText = seatsNum * ticketPrice;
+        document.getElementById('totalPrice').innerText = (seatsNum * ticketPrice) + " $";
     }
 </script>

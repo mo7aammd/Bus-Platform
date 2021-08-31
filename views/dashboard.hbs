@@ -7,10 +7,10 @@
     </ol>
     <div class="carousel-inner">
       <div class="carousel-item active">
-        <img src="/images/bg1.jpg" class="d-block w-100" style="height: 360px;">
+        <img src="/images/bg2.jpg" class="d-block w-100" style="height: 360px;">
       </div>
       <div class="carousel-item">
-        <img src="/images/bg2.jpg" class="d-block w-100" style="height: 360px;">
+        <img src="/images/bg1.jpg" class="d-block w-100" style="height: 360px;">
       </div>
       <div class="carousel-item">
         <img src="/images/bg3.jpg" class="d-block w-100" style="height: 360px;">
@@ -34,9 +34,23 @@
   <div class="row">
     <div class="col-sm-12 col-xl-8">
       <div class="input-daterange input-group" id="datepicker">
-        <input type="datetime-local" class="input-sm form-control" name="start">
+        <input type="date" class="input-sm form-control" id="startDatepicker" name="startDatepicker" value="{{startDatepicker}}">
         <span class="input-group-addon">To</span>
-        <input type="datetime-local" class="input-sm form-control" name="end">
+        <input type="date" class="input-sm form-control" id="endDatepicker" name="endDatepicker" value="{{endDatepicker}}">
+        <button class="btn btn-primary" onclick="click1()">ok</i></button>
+        <script>
+          function click1() {
+            const startDtaePicker = document.getElementById("startDatepicker");
+            const startDate = moment(startDtaePicker.valueAsDate).format('YYYY-MM-DD');
+            const endDtaePicker = document.getElementById("endDatepicker");
+            const endDate = moment(endDtaePicker.valueAsDate).format('YYYY-MM-DD');
+            if (moment(startDate).isValid() && moment(endDate).isValid()) {
+              window.location.href = `/dashboard?start=${startDate}&end=${endDate}`;
+            } else {
+              alert("check date fields are not empty!")
+            }
+          }
+        </script>
       </div>
     </div>
   </div>
@@ -63,7 +77,7 @@
         <td>{{../prefix}}{{from}}</td>
         <td>{{../prefix}}{{to}}</td>
         <td>{{../prefix}}{{date}}</td>
-        <td style="color:rgb(49, 118, 247);">${{../prefix}}{{price}}</td>
+        <td style="color:rgb(49, 118, 247);">{{../prefix}}{{price}} $</td>
         <td>
           <a class="btn btn-info btn-mini waves-effect waves-light" href="/reservations/{{{ _id }}}">view</a>
           {{../prefix}}{{formateSeats seatsCount}}
@@ -75,7 +89,10 @@
       {{/each}}
     </tbody>
   </table>
+  {{else}}
+  <h3 style="text-align: center;margin: 150px">No Trips Available!</h3>
   {{/if}}
+
 
 </div>
 
@@ -83,19 +100,24 @@
   <nav aria-label="...">
     <ul class="pagination">
       {{#paginate pagination type="first"}}
-      <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link" href="?p={{n}}">First</a></li>
+      <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link"
+          href="?p={{n}}{{#if ../start}}&start={{../start}}{{/if}}{{#if ../end}}&end={{../end}}{{/if}}">First</a></li>
       {{/paginate}}
       {{#paginate pagination type="previous"}}
-      <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link" href="?p={{n}}">Prev</a></li>
+      <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link"
+          href="?p={{n}}{{#if ../start}}&start={{../start}}{{/if}}{{#if ../end}}&end={{../end}}{{/if}}">Prev</a></li>
       {{/paginate}}
       {{#paginate pagination type="middle" limit="7"}}
-      <li {{#if active}}class="page-item active" {{/if}}><a class="page-link" href="?p={{n}}">{{n}}</a></li>
+      <li {{#if active}}class="page-item active" {{/if}}><a class="page-link"
+          href="?p={{n}}{{#if ../start}}&start={{../start}}{{/if}}{{#if ../end}}&end={{../end}}{{/if}}">{{n}}</a></li>
       {{/paginate}}
       {{#paginate pagination type="next"}}
-      <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link" href="?p={{n}}">Next</a></li>
+      <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link"
+          href="?p={{n}}{{#if ../start}}&start={{../start}}{{/if}}{{#if ../end}}&end={{../end}}{{/if}}">Next</a></li>
       {{/paginate}}
       {{#paginate pagination type="last"}}
-      <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link" href="?p={{n}}">Last</a></li>
+      <li {{#if disabled}}class="page-item disabled" {{/if}}><a class="page-link"
+          href="?p={{n}}{{#if ../start}}&start={{../start}}{{/if}}{{#if ../end}}&end={{../end}}{{/if}}">Last</a></li>
       {{/paginate}}
     </ul>
   </nav>
@@ -127,3 +149,4 @@
     }
   }
 </style>
+<script src="/js/moment.min.js"></script>

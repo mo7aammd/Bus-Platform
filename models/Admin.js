@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
-const CompanySchema = new mongoose.Schema({
-  companyName: {
+const AdminSchema = new mongoose.Schema({
+  name: {
     type: String,
     required: true,
   },
@@ -9,17 +9,13 @@ const CompanySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isAdmin: {
+    type: Boolean,
+    default: true,
+  },
   password: {
     type: String,
     required: true,
-  },
-  imageUrl: {
-    type: String,
-    required: true,
-  },
-  isEnabled: {
-    type: Boolean,
-    default: true,
   },
   createdAt: {
     type: Date,
@@ -27,4 +23,4 @@ const CompanySchema = new mongoose.Schema({
   }
 })
 
-module.exports = mongoose.model('Company', CompanySchema)
+module.exports = mongoose.model('Admin', AdminSchema)
